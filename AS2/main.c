@@ -78,9 +78,76 @@ char * find_file(int choice){
     }
 }
 
-void process_file(char * file){
-    
+int set_size(struct List list){
+    struct movie* curr = list.head;
+    list.size = 0;
+    while(curr){
+        list.size++;
+        curr = curr->next;
+    }
+    return list.size;
+}
 
+void print_movie(struct movie* node){
+    printf("Name: %s    ",node->name);
+    printf("Year: %d    ",node->year);
+    printf("Languages: %s    ",node->lang);
+    printf("Rating: %f.1\n",node->ratings);
+    return;
+}
+
+struct movie* create_node(char* line){
+    //printf("Making new movie node\n");
+    struct movie* new = (struct movie *)malloc(sizeof(struct movie));
+    char* token;
+    const char spacer[2] = ",";
+    token = strtok(line, spacer);
+    new->name = calloc(strlen(token)+ 1, sizeof(char));
+    strcpy(new->name, token);
+    token = strtok(NULL, spacer);
+    new->year = atoi(token);
+    token = strtok(NULL,spacer);
+    new->lang = calloc(strlen(token)+ 1, sizeof(char));
+    strcpy(new->lang, token);
+    token = strtok(NULL, spacer);
+    new->ratings = atof(token);
+    new->next = NULL;
+    print_movie(new);
+    return new;
+}
+
+
+struct movie* read_file(char *name){
+    char *line;
+    int line_size = 32;
+    line = (char *)malloc(line_size * sizeof(char));
+    FILE *f = fopen(name,"r");
+    if(f == NULL){
+        printf("Error:: Cannot Open File\n");
+        return 0;
+    }
+    struct movie* head = NULL;
+    struct movie* curr = NULL;
+    while(fgets(line,100, f) != NULL){
+        //printf("%s", line);
+        struct movie* newnode = create_node(line);
+        if(head == NULL){
+            head = newnode;
+            curr = newnode;
+        }
+        else{
+            curr->next = newnode;
+            curr = newnode;
+        }
+    }
+    return head;
+}
+
+void process_file(char * file){
+    struct List list;
+    list.head = read_file(file);
+    list.size = set_size(list);
+    list.name = file;
 }
 
 int menu(){
