@@ -104,7 +104,6 @@ struct movie* create_node(char* line){
     return new;
 }
 
-
 struct movie* read_file(char *name){
     char *line;
     line = (char *)malloc(1000 * sizeof(char));
@@ -230,7 +229,6 @@ int menu1(){
         }
     }
 }
-
 
 int main(){
     srand(time(NULL));
