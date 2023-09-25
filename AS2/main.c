@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <string.h>
+#include <conio.h>
+#include <sys/types.h>
+#include <time.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include "main.h"
 
@@ -43,7 +48,7 @@ char * find_file(int choice){
     DIR *dir  = opendir(".");
     if(dir == NULL){
         printf("Directory Cannot Be Opened\n");
-        return -1;
+        return "Failure";
     }
 
     long int largest = 0;
@@ -112,7 +117,7 @@ struct movie* create_node(char* line){
     token = strtok(NULL, spacer);
     new->ratings = atof(token);
     new->next = NULL;
-    print_movie(new);
+    //print_movie(new);
     return new;
 }
 
@@ -143,11 +148,56 @@ struct movie* read_file(char *name){
     return head;
 }
 
+void make_new_files(struct List list, char * file, char * dir){
+    struct movie * curr;
+    curr = list.head;
+    int year_lowest = curr->year;
+    int year_highest = curr->year;
+    while(curr){
+        if(curr->year < year_lowest){
+            year_lowest = curr->year;
+        }
+        if(curr->year > year_highest){
+            year_highest = curr->year;
+        }
+        curr = curr->next; 
+    }
+    curr = list.head;
+    printf("Highest Year: %d, Lowest Year: %d\n", year_highest,year_lowest);
+    for(int i = year_lowest; i <= year_highest; i++){
+        FILE * fp;
+        char * file_name = calloc(sizeof(char), 256);
+        sprintf(file_name, "./%s/%d.txt",dir,i);
+        printf("%s\n\n", file_name);
+        fp = fopen(file_name,"w");
+        while(curr){
+            if(curr->year == i){
+                //print_movie(curr);
+                fputs(curr->name, fp);   
+                fputs("\n", fp);
+            }
+            curr = curr->next;
+        }
+        fclose(fp);
+        curr = list.head;
+    }
+}
+
+
 void process_file(char * file){
+    printf("\nProcessing file: %s\n", file);
     struct List list;
     list.head = read_file(file);
     list.size = set_size(list);
     list.name = file;
+    int check;
+    char * dirname = "thorpse.movies";
+    int r = rand();
+    char * n;
+    sprintf(n, "%s.%d", dirname, r);
+    check = mkdir(n);
+    chmod(dirname, 0777);
+    make_new_files(list, file, n);
 }
 
 int menu(){
@@ -194,6 +244,7 @@ int menu1(){
 
 
 int main(){
+    srand(time(NULL));
     int exit = menu();
     while(exit != 2){
         exit = menu1();
