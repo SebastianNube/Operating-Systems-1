@@ -85,16 +85,19 @@ void highest_movie_each_year(struct List list){
     return;
 }
 
-void sort_by_language(struct List list, char * selection){
+void sort_by_language(struct List list){
     struct movie* curr = list.head;
     char spacer[2] = ";";
-    char lang_temp[50];
+    char* selection = malloc(256*sizeof(char *));
+    printf("Enter a language to search for: ");
+    scanf("%s", selection);
+    char lang_temp[100];
     char* token;
     int check = 0;
     printf("\n");
     while(curr != NULL){
-
-        strcpy( lang_temp,curr->lang);
+        token = NULL;
+        strcpy( lang_temp ,curr->lang);
         token = strtok(lang_temp, spacer);
         while(token != NULL){
             if(strcmp(token, selection) == 0){
@@ -102,7 +105,9 @@ void sort_by_language(struct List list, char * selection){
                 check = 1;
             }
             token = strtok(NULL, spacer);
+            //printf("\t%s %s\t", curr->name, token);
         }
+
         curr = curr->next;
     }
     if(check == 0){
@@ -179,8 +184,8 @@ struct movie* create_node(char* line){
 
 struct movie* read_file(char *name){
     char *line;
-    int line_size = 32;
-    line = (char *)malloc(line_size * sizeof(char));
+    int line_size = 50;
+    line = malloc(line_size * sizeof(char* ));
     FILE *f = fopen(name,"r");
     if(f == NULL){
         printf("Error:: Cannot Open File\n");
@@ -250,10 +255,7 @@ int run(struct List list){
             highest_movie_each_year(list);
             return choice;
         case 3:
-            char* selection;
-            printf("Enter a language to search for: ");
-            scanf("%s", selection);
-            sort_by_language(list, selection);
+            sort_by_language(list);
             return choice;
         case 4:
             printf("Quitting Program\n\n");
@@ -278,6 +280,7 @@ int main(int argc, char * argv[]){
     list.head = read_file(argv[1]);
     list.size = set_size(list);
     list.name = argv[1];
+    printf("List Created\n");
     printf("Able to Process file %s and parse %d movies\n", list.name ,list.size);
     int exit = 0;
     while(exit != 4){
