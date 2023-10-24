@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 
 char * HOME_DIR = ".";
 
@@ -13,13 +14,17 @@ char * input_line(){
     return input;
 }
 
+void * change_directory(){
+    return;
+}
+
 void run(){
     printf("$ smallsh\n");
-    char * input = malloc(2566 * sizeof(char *));
+    char * input = malloc(256 * sizeof(char *));
     while(strcmp(input, "exit") != 0){
         input = input_line();
         if(strcmp(input, "cd") == 0){
-            change_directory()
+            change_directory();
         }
         else if(strcmp(input, "ls") == 0){
 
