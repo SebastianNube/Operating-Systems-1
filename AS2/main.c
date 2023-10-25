@@ -3,7 +3,6 @@
 #include <sys/types.h>
 #include <string.h>
 #include <conio.h>
-#include <sys/types.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <dirent.h>
