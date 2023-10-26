@@ -113,7 +113,8 @@ struct movie* read_file(char *name){
     }
     struct movie* head = NULL;
     struct movie* curr = NULL;
-    while(fgets(line,200, f) != NULL){
+    fgets(line,500,f);
+    while(fgets(line,500, f) != NULL){
         //printf("%s", line);
         struct movie* newnode = create_node(line);
         if(head == NULL){
